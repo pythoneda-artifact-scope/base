@@ -4,16 +4,10 @@
   inputs = rec {
     nixos.url = "github:NixOS/nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    poetry2nix = {
-      url = "github:nix-community/poetry2nix/v1.28.0";
-      inputs.nixpkgs.follows = "nixos";
-      inputs.flake-utils.follows = "flake-utils";
-    };
     pythoneda-base = {
-      url = "github:pythoneda/base/0.0.1a12";
+      url = "github:pythoneda/base/0.0.1a13";
       inputs.nixos.follows = "nixos";
       inputs.flake-utils.follows = "flake-utils";
-      inputs.poetry2nix.follows = "poetry2nix";
     };
   };
   outputs = inputs:
@@ -26,16 +20,25 @@
         homepage = "https://github.com/pythoneda-artifact-scope/base";
         maintainers = with pkgs.lib.maintainers; [ ];
         nixpkgsRelease = "nixos-23.05";
-        shared = import ./nix/devShell.nix;
+        shared = import ./nix/devShells.nix;
         pythoneda-artifact-base-for = { version, pythoneda-base, python }:
-          python.pkgs.buildPythonPackage rec {
+          let
             pname = "pythoneda-artifact-base";
-            inherit version;
+            pythonVersionParts = builtins.splitVersion python.version;
+            pythonMajorVersion = builtins.head pythonVersionParts;
+            pythonMajorMinorVersion =
+              "${pythonMajorVersion}.${builtins.elemAt pythonVersionParts 1}";
+            pnameWithUnderscores =
+              builtins.replaceStrings [ "-" ] [ "_" ] pname;
+            wheelName =
+              "${pnameWithUnderscores}-${version}-py${pythonMajorVersion}-none-any.whl";
+          in python.pkgs.buildPythonPackage rec {
+            inherit pname version;
             projectDir = ./.;
             src = ./.;
             format = "pyproject";
 
-            nativeBuildInputs = with python.pkgs; [ pip poetry-core ];
+            nativeBuildInputs = with python.pkgs; [ pip pkgs.jq poetry-core ];
             propagatedBuildInputs = with python.pkgs; [ pythoneda-base ];
 
             checkInputs = with python.pkgs; [ pytest ];
@@ -45,16 +48,18 @@
             preBuild = ''
               python -m venv .env
               source .env/bin/activate
-              pip install ${pythoneda-base}/dist/pythoneda_base-0.0.1a12-py3-none-any.whl
+              pip install ${pythoneda-base}/dist/pythoneda_base-${pythoneda-base.version}-py${pythonMajorVersion}-none-any.whl
+              rm -rf .env
             '';
 
             postInstall = ''
               mkdir $out/dist
-              cp dist/*.whl $out/dist
+              cp dist/${wheelName} $out/dist
+              jq ".url = \"$out/dist/${wheelName}\"" $out/lib/python${pythonMajorMinorVersion}/site-packages/${pnameWithUnderscores}-${version}.dist-info/direct_url.json > temp.json && mv temp.json $out/lib/python${pythonMajorMinorVersion}/site-packages/${pnameWithUnderscores}-${version}.dist-info/direct_url.json
             '';
 
             meta = with pkgs.lib; {
-              inherit description license homepage maintainers;
+              inherit description homepage license maintainers;
             };
           };
         pythoneda-artifact-base-0_0_1a1-for = { pythoneda-base, python }:
