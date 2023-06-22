@@ -1,7 +1,7 @@
 """
-pythonedaartifactgittagging/tag_requested.py
+pythonedaartifactgittagging/tag_created.py
 
-This file declares the TagRequested event.
+This file declares the TagCreated event.
 
 Copyright (C) 2023-today rydnr's pythoneda-artifact/git-tagging
 
@@ -22,11 +22,11 @@ from pythoneda.event import Event
 from pythoneda.value_object import primary_key_attribute
 
 
-class TagRequested(Event):
+class TagCreated(Event):
     """
-    Represents the request for tagging a repository.
+    Represents the moment a new tag has been created.
 
-    Class name: TagRequested
+    Class name: TagCreated
 
     Responsibilities:
         - Wraps all contextual information of the event.
@@ -34,17 +34,26 @@ class TagRequested(Event):
     Collaborators:
         - None
     """
-    def __init__(self, repositoryUrl: str, branch: str):
+
+    def __init__(self, name: str, repositoryUrl: str):
         """
-        Creates a new TagRequested instance.
+        Creates a new TagCreated instance.
         :param repositoryUrl: The url of the repository.
         :type repositoryUrl: str
-        :param branch: The branch to tag.
-        :type branch: str
         """
         super().__init__()
+        self._name = name
         self._repository_url = repositoryUrl
-        self._branch = branch
+
+    @property
+    @primary_key_attribute
+    def name(self) -> str:
+        """
+        Retrieves the tag name.
+        :return: Such name.
+        :rtype: str
+        """
+        return self._name
 
     @property
     @primary_key_attribute
@@ -55,13 +64,3 @@ class TagRequested(Event):
         :rtype: str
         """
         return self._repository_url
-
-    @property
-    @primary_key_attribute
-    def branch(self) -> str:
-        """
-        Retrieves the branch of the repository to tag.
-        :return: Such name.
-        :rtype: str
-        """
-        return self._branch

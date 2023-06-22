@@ -22,7 +22,7 @@ rec {
   '';
   devShell-for = { package, pythoneda-base, python, pkgs, nixpkgsRelease }:
     pkgs.mkShell {
-      buildInputs = [ package ];
+      buildInputs = [ package python.pkgs.pytest ];
       shellHook =
         shellHook-for { inherit package pythoneda-base python nixpkgsRelease; };
     };

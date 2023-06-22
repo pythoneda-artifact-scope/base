@@ -20,14 +20,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.entity import Entity
 from pythoneda.event import Event
+from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
 from pythoneda.value_object import primary_key_attribute
 
+from pythonedaartifactgittagging.tag_created import TagCreated
 from pythonedaartifactgittagging.tag_requested import TagRequested
+
+from pythonedasharedgit.git_repo import GitRepo
 
 from typing import List, Type
 
-class Tag(Entity, EventListener):
+class Tag(Entity, EventListener, EventEmitter):
     """
     Represents a tag in the source code.
 
@@ -41,14 +45,17 @@ class Tag(Entity, EventListener):
         - TagRequested: The event that triggers the tagging process.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, gitRepo: GitRepo):
         """
         Creates a new Tag instance.
         :param name: The tag name.
         :type name: str
+        :param gitRepo: The git repository.
+        :type gitRepo: GitRepo from pythonedasharedgit.git_repo
         """
         super().__init__()
         self._name = name
+        self._git_repo = gitRepo
 
     @property
     @primary_key_attribute
@@ -60,6 +67,16 @@ class Tag(Entity, EventListener):
         """
         return self._name
 
+    @property
+    @primary_key_attribute
+    def git_repo(self) -> str:
+        """
+        Retrieves the git repository.
+        :return: Such information.
+        :rtype: str
+        """
+        return self._git_repo
+
     @classmethod
     def supported_events(cls) -> List[Type[Event]]:
         """
@@ -69,7 +86,13 @@ class Tag(Entity, EventListener):
 
 
     @classmethod
-    async def listenTagRequested(cls, event: TagRequested): # -> TagCreated:
+    async def listenTagRequested(cls, event: TagRequested) -> TagCreated:
         result = None
 
         print(f'Received {event} !!')
+
+        gitRepo = GitRepo(event.repository_url, event.branch)
+        tag = Tag("removeme", gitRepo)
+        result = TagCreated("dummy", event.repository_url)
+        await cls.emit(result)
+        return result
