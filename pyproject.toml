@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "pythoneda-artifact-base"
-version = "0.0.1a2"
-description = "Artifact scope for pythoneda/base"
+name = "pythoneda-artifact-git-tagging"
+version = "0.0.1a3"
+description = "Tags git repositories"
 authors = ["rydnr <github@acm-sl.org>"]
 readme = "README.md"
-homepage = "https://github.com/pythoneda-artifact/base"
-packages = [{include = "pythonedaartifact"}]
+homepage = "https://github.com/pythoneda-artifact/git-tagging"
+packages = [{include = "pythonedaartifactgittagging"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"

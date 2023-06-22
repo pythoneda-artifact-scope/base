@@ -1,5 +1,5 @@
 {
-  description = "Artifact scope for pythoneda/base";
+  description = "Tags git repositories";
 
   inputs = rec {
     nixos.url = "github:NixOS/nixpkgs/nixos-23.05";
@@ -15,15 +15,16 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixos { inherit system; };
-        description = "Artifact scope for pythoneda/base";
+        description = "Tags git repositories";
         license = pkgs.lib.licenses.gpl3;
-        homepage = "https://github.com/pythoneda-artifact-scope/base";
+        homepage = "https://github.com/pythoneda-artifact/git-tagging";
         maintainers = with pkgs.lib.maintainers; [ ];
         nixpkgsRelease = "nixos-23.05";
         shared = import ./nix/devShells.nix;
-        pythoneda-artifact-base-for = { version, pythoneda-base, python }:
+        pythoneda-artifact-git-tagging-for =
+          { version, pythoneda-base, python }:
           let
-            pname = "pythoneda-artifact-base";
+            pname = "pythoneda-artifact-git-tagging";
             pythonVersionParts = builtins.splitVersion python.version;
             pythonMajorVersion = builtins.head pythonVersionParts;
             pythonMajorMinorVersion =
@@ -43,7 +44,7 @@
 
             checkInputs = with python.pkgs; [ pytest ];
 
-            pythonImportsCheck = [ "pythonedaartifact" ];
+            pythonImportsCheck = [ "pythonedaartifactgittagging" ];
 
             preBuild = ''
               python -m venv .env
@@ -62,73 +63,79 @@
               inherit description homepage license maintainers;
             };
           };
-        pythoneda-artifact-base-0_0_1a2-for = { pythoneda-base, python }:
-          pythoneda-artifact-base-for {
-            version = "0.0.1a2";
+        pythoneda-artifact-git-tagging-0_0_1a3-for = { pythoneda-base, python }:
+          pythoneda-artifact-git-tagging-for {
+            version = "0.0.1a3";
             inherit pythoneda-base python;
           };
       in rec {
         packages = rec {
-          pythoneda-artifact-base-0_0_1a2-python38 =
-            pythoneda-artifact-base-0_0_1a2-for {
+          pythoneda-artifact-git-tagging-0_0_1a3-python38 =
+            pythoneda-artifact-git-tagging-0_0_1a3-for {
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python38;
               python = pkgs.python38;
             };
-          pythoneda-artifact-base-0_0_1a2-python39 =
-            pythoneda-artifact-base-0_0_1a2-for {
+          pythoneda-artifact-git-tagging-0_0_1a3-python39 =
+            pythoneda-artifact-git-tagging-0_0_1a3-for {
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
               python = pkgs.python39;
             };
-          pythoneda-artifact-base-0_0_1a2-python310 =
-            pythoneda-artifact-base-0_0_1a2-for {
+          pythoneda-artifact-git-tagging-0_0_1a3-python310 =
+            pythoneda-artifact-git-tagging-0_0_1a3-for {
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
               python = pkgs.python310;
             };
-          pythoneda-artifact-base-latest-python38 =
-            pythoneda-artifact-base-0_0_1a2-python38;
-          pythoneda-artifact-base-latest-python39 =
-            pythoneda-artifact-base-0_0_1a2-python39;
-          pythoneda-artifact-base-latest-python310 =
-            pythoneda-artifact-base-0_0_1a2-python310;
-          pythoneda-artifact-base-latest =
-            pythoneda-artifact-base-latest-python310;
-          default = pythoneda-artifact-base-latest;
+          pythoneda-artifact-git-tagging-latest-python38 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python38;
+          pythoneda-artifact-git-tagging-latest-python39 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python39;
+          pythoneda-artifact-git-tagging-latest-python310 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python310;
+          pythoneda-artifact-git-tagging-latest =
+            pythoneda-artifact-git-tagging-latest-python310;
+          default = pythoneda-artifact-git-tagging-latest;
         };
         defaultPackage = packages.default;
         devShells = rec {
-          pythoneda-artifact-base-0_0_1a2-python38 = shared.devShell-for {
-            package = packages.pythoneda-artifact-base-0_0_1a2-python38;
-            pythoneda-base =
-              pythoneda-base.packages.${system}.pythoneda-base-latest-python38;
-            python = pkgs.python38;
-            inherit pkgs nixpkgsRelease;
-          };
-          pythoneda-artifact-base-0_0_1a2-python39 = shared.devShell-for {
-            package = packages.pythoneda-artifact-base-0_0_1a2-python39;
-            pythoneda-base =
-              pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
-            python = pkgs.python39;
-            inherit pkgs nixpkgsRelease;
-          };
-          pythoneda-artifact-base-0_0_1a2-python310 = shared.devShell-for {
-            package = packages.pythoneda-artifact-base-0_0_1a2-python310;
-            pythoneda-base =
-              pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
-            python = pkgs.python310;
-            inherit pkgs nixpkgsRelease;
-          };
-          pythoneda-artifact-base-latest-python38 =
-            pythoneda-artifact-base-0_0_1a2-python38;
-          pythoneda-artifact-base-latest-python39 =
-            pythoneda-artifact-base-0_0_1a2-python39;
-          pythoneda-artifact-base-latest-python310 =
-            pythoneda-artifact-base-0_0_1a2-python310;
-          pythoneda-artifact-base-latest =
-            pythoneda-artifact-base-latest-python310;
-          default = pythoneda-artifact-base-latest;
+          pythoneda-artifact-git-tagging-0_0_1a3-python38 =
+            shared.devShell-for {
+              package =
+                packages.pythoneda-artifact-git-tagging-0_0_1a3-python38;
+              pythoneda-base =
+                pythoneda-base.packages.${system}.pythoneda-base-latest-python38;
+              python = pkgs.python38;
+              inherit pkgs nixpkgsRelease;
+            };
+          pythoneda-artifact-git-tagging-0_0_1a3-python39 =
+            shared.devShell-for {
+              package =
+                packages.pythoneda-artifact-git-tagging-0_0_1a3-python39;
+              pythoneda-base =
+                pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
+              python = pkgs.python39;
+              inherit pkgs nixpkgsRelease;
+            };
+          pythoneda-artifact-git-tagging-0_0_1a3-python310 =
+            shared.devShell-for {
+              package =
+                packages.pythoneda-artifact-git-tagging-0_0_1a3-python310;
+              pythoneda-base =
+                pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
+              python = pkgs.python310;
+              inherit pkgs nixpkgsRelease;
+            };
+          pythoneda-artifact-git-tagging-latest-python38 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python38;
+          pythoneda-artifact-git-tagging-latest-python39 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python39;
+          pythoneda-artifact-git-tagging-latest-python310 =
+            pythoneda-artifact-git-tagging-0_0_1a3-python310;
+          pythoneda-artifact-git-tagging-latest =
+            pythoneda-artifact-git-tagging-latest-python310;
+          default = pythoneda-artifact-git-tagging-latest;
 
         };
       });

@@ -1,9 +1,9 @@
 """
-pythonedaartifact/tag.py
+pythonedaartifactgittagging/tag.py
 
 This file declares the Tag class.
 
-Copyright (C) 2023-today rydnr's pythoneda-artifact/base
+Copyright (C) 2023-today rydnr's pythoneda-artifact/git-tagging
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ from pythoneda.event import Event
 from pythoneda.event_listener import EventListener
 from pythoneda.value_object import primary_key_attribute
 
-from pythonedaartifact.tag_requested import TagRequested
+from pythonedaartifactgittagging.tag_requested import TagRequested
 
 from typing import List, Type
 

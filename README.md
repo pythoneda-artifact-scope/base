@@ -1,4 +1,3 @@
-# PythonEDA-Artifact/base
+# git-tagging
 
-This package deals with the artifact scope of [pythoneda/base](https://github.com/pythoneda/base "pythoneda/base").
-Automated tagging of pythoneda/base will be implemented in this repository, for example. 
+This is an artifact-scope package which deals with tagging git repositories.

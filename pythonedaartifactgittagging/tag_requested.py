@@ -1,9 +1,9 @@
 """
-pythonedaartifact/tag_requested.py
+pythonedaartifactgittagging/tag_requested.py
 
 This file declares the TagRequested event.
 
-Copyright (C) 2023-today rydnr's pythoneda-artifact/base
+Copyright (C) 2023-today rydnr's pythoneda-artifact/git-tagging
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
