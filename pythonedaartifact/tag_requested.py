@@ -1,7 +1,7 @@
 """
-pythonedaartifact/tag_repository_requested.py
+pythonedaartifact/tag_requested.py
 
-This file declares the TagRepositoryRequested event.
+This file declares the TagRequested event.
 
 Copyright (C) 2023-today rydnr's pythoneda-artifact/base
 
@@ -19,13 +19,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.event import Event
+from pythoneda.value_object import primary_key_attribute
 
 
-class TagRepositoryRequested(Event):
+class TagRequested(Event):
     """
     Represents the request for tagging a repository.
 
-    Class name: TagRepositoryRequested
+    Class name: TagRequested
 
     Responsibilities:
         - Wraps all contextual information of the event.
@@ -35,11 +36,11 @@ class TagRepositoryRequested(Event):
     """
     def __init__(self, repositoryUrl: str):
         """
-        Creates a new TagRepositoryRequested instance.
+        Creates a new TagRequested instance.
         :param repositoryUrl: The url of the repository.
         :type repositoryUrl: str
         """
-        super().__init()__
+        super().__init__()
         self._repository_url = repositoryUrl
 
     @property
@@ -50,4 +51,4 @@ class TagRepositoryRequested(Event):
         :return: Such url.
         :rtype: str
         """
-        return sef._repository_url
+        return self._repository_url

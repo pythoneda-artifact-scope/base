@@ -5,7 +5,7 @@
     nixos.url = "github:NixOS/nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     pythoneda-base = {
-      url = "github:pythoneda/base/0.0.1a14";
+      url = "github:pythoneda/base/0.0.1a15";
       inputs.nixos.follows = "nixos";
       inputs.flake-utils.follows = "flake-utils";
     };
