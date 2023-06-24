@@ -29,6 +29,8 @@ from pythonedaartifactgittagging.tag import Tag
 from pythonedaartifactgittagging.tag_created import TagCreated
 from pythonedaartifactgittagging.tag_requested import TagRequested
 
+from pythonedasharedgit.git_repo import GitRepo
+
 import asyncio
 import pytest
 import re
@@ -60,17 +62,7 @@ class TagTests(unittest.IsolatedAsyncioTestCase):
         # then
         assert result is not None
         assert type(result) == TagCreated
-
-    def check_tag_exists(self, repository: str, tag: str) -> bool:
-        """
-        Checks if given tag exists.
-        :param repositoryUrl: The url of the git repository.
-        :type repositoryUrl: str
-        :param tag: The tag.
-        :type tag: str
-        :return: True in such case.
-        :rtype: bool
-        """
+        assert GitRepo.tag_exists(result.repository_url, result.name)
 
 if __name__ == '__main__':
     unittest.main()

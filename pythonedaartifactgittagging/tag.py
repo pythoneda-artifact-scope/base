@@ -28,6 +28,7 @@ from pythonedaartifactgittagging.tag_created import TagCreated
 from pythonedaartifactgittagging.tag_requested import TagRequested
 
 from pythonedasharedgit.git_repo import GitRepo
+from pythonedasharedgit.version import Version
 
 from typing import List, Type
 
@@ -35,7 +36,7 @@ class Tag(Entity, EventListener, EventEmitter):
     """
     Represents a tag in the source code.
 
-    Class name: TagRepositoryRequested
+    Class name: Tag
 
     Responsibilities:
         - Represents a tag.
@@ -43,6 +44,7 @@ class Tag(Entity, EventListener, EventEmitter):
 
     Collaborators:
         - TagRequested: The event that triggers the tagging process.
+        - GitRepoFactory: To create GitRepo instances.
     """
 
     def __init__(self, name: str, gitRepo: GitRepo):
@@ -91,8 +93,13 @@ class Tag(Entity, EventListener, EventEmitter):
 
         print(f'Received {event} !!')
 
-        gitRepo = GitRepo(event.repository_url, event.branch)
+        gitRepo = GitRepoFactory.create(event.repository_url, event.branch)
         tag = Tag("removeme", gitRepo)
+
+        gitRepo.clone()
+
+        gitRepo.increase_build()
+
         result = TagCreated("dummy", event.repository_url)
         await cls.emit(result)
         return result
