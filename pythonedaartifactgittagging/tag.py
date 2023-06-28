@@ -24,8 +24,10 @@ from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
 from pythoneda.value_object import primary_key_attribute
 
-from pythonedaartifactgittagging.tag_created import TagCreated
-from pythonedaartifactgittagging.tag_requested import TagRequested
+from pythonedaartifacteventgittagging.tag_created import TagCreated
+from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
+from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
+from pythonedaartifacteventgittagging.tag_requested import TagRequested
 
 from pythonedasharedgit.git_repo import GitRepo
 from pythonedasharedgit.version import Version
@@ -44,6 +46,8 @@ class Tag(Entity, EventListener, EventEmitter):
 
     Collaborators:
         - TagRequested: The event that triggers the tagging process.
+        - TagCredentialsRequested: The event to request credentials for tagging.
+        - TagCredentialsProvided: The event with the required credentials for tagging.
         - GitRepoFactory: To create GitRepo instances.
     """
 
@@ -83,17 +87,35 @@ class Tag(Entity, EventListener, EventEmitter):
     def supported_events(cls) -> List[Type[Event]]:
         """
         Retrieves the list of supported event classes.
+        :return: Such list.
+        :rtype: List
         """
-        return [ TagRequested ]
+        return [ TagRequested, TagCredentialsProvided ]
 
 
     @classmethod
-    async def listenTagRequested(cls, event: TagRequested) -> TagCreated:
+    async def listenTagRequested(cls, event: TagRequested):
+        """
+        Gets notified of the request of a tag.
+        :param event: The TagRequested event.
+        :type event: TagRequested
+        """
+        result = None
+
+        await self.__class__.emit(TagCredentialsRequested(event.repository_url, event.branch))
+
+    @classmethod
+    async def listenTagCredentialsProvided(cls, event: TagCredentialsProvided) -> TagCreated:
+        """
+        Gets notified of the credentials needed to create a tag.
+        :param event: The TagCredentialsProvided event.
+        :type event: TagCredentialsProvided
+        """
         result = None
 
         print(f'Received {event} !!')
 
-        gitRepo = GitRepoFactory.create(event.repository_url, event.branch)
+        gitRepo = GitRepoFactory.create(event.repository_url, event.branch, event.ssh_username, event.private_key_file, event.private_key_passphrase)
         tag = Tag("removeme", gitRepo)
 
         gitRepo.clone()
