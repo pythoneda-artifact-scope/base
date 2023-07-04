@@ -22,6 +22,7 @@ from pythoneda.entity import Entity
 from pythoneda.event import Event
 from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
+from pythoneda.ports import Ports
 from pythoneda.value_object import primary_key_attribute
 
 from pythonedaartifacteventgittagging.tag_created import TagCreated
@@ -34,7 +35,7 @@ from pythonedasharedgit.version import Version
 
 from typing import List, Type
 
-class Tag(Entity, EventListener, EventEmitter):
+class Tag(Entity, EventListener):
     """
     Represents a tag in the source code.
 
@@ -94,26 +95,28 @@ class Tag(Entity, EventListener, EventEmitter):
 
 
     @classmethod
-    async def listenTagRequested(cls, event: TagRequested):
+    async def listen_TagRequested(cls, event: TagRequested) -> TagCredentialsRequested:
         """
         Gets notified of the request of a tag.
         :param event: The TagRequested event.
         :type event: TagRequested
+        :return: The request for credentials required for tagging.
+        :rtype: TagCredentialsRequested from pythonedaartifacteventgitttagging.tag_credentials_requested
         """
-        result = None
+        result = TagCredentialsRequested(event.repository_url, event.branch)
 
-        await self.__class__.emit(TagCredentialsRequested(event.repository_url, event.branch))
+        event_emitter = Ports.instance().resolve(EventEmitter)
+        await event_emitter.emit(result)
+        return result
 
     @classmethod
-    async def listenTagCredentialsProvided(cls, event: TagCredentialsProvided) -> TagCreated:
+    async def listen_TagCredentialsProvided(cls, event: TagCredentialsProvided) -> TagCreated:
         """
         Gets notified of the credentials needed to create a tag.
         :param event: The TagCredentialsProvided event.
         :type event: TagCredentialsProvided
         """
         result = None
-
-        print(f'Received {event} !!')
 
         gitRepo = GitRepoFactory.create(event.repository_url, event.branch, event.ssh_username, event.private_key_file, event.private_key_passphrase)
         tag = Tag("removeme", gitRepo)
@@ -123,5 +126,6 @@ class Tag(Entity, EventListener, EventEmitter):
         gitRepo.increase_build()
 
         result = TagCreated("dummy", event.repository_url)
-        await cls.emit(result)
+        event_emitter = Ports.instance().resolve(EventEmitter)
+        await event_emitter.emit(result)
         return result
