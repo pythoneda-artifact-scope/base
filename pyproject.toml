@@ -8,7 +8,7 @@ homepage = "https://github.com/pythoneda-artifact/git-tagging"
 packages = [{include = "pythonedaartifactgittagging"}]
 
 [tool.poetry.dependencies]
-dulwich = "^0.20.50"
+dulwich = "^0.21.5"
 GitPython = "^3.1.27"
 paramiko = "^2.11.0"
 python = "^3.8"
