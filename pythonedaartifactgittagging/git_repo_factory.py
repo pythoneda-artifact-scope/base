@@ -19,11 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.port import Port
+from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedasharedgit.git_repo import GitRepo
+from pythonedasharedgit.ssh_git_repo import SshGitRepo
 
-import abc
-
-class GitRepoFactory(Port, abc.ABC):
+class GitRepoFactory(Port):
     """
     A class capable of creating GitRepo instances.
 
@@ -33,18 +33,15 @@ class GitRepoFactory(Port, abc.ABC):
         - Builds GitRepo instances.
 
     Collaborators:
-        - None
+        - TagCredentialsProvided: To provide the required credentials.
     """
 
-    @abc.abstractmethod
-    def create(self, repositoryUrl: str, head: str) -> GitRepo:
+    def create(self, event: TagCredentialsProvided) -> GitRepo:
         """
         Creates a GitRepo instance.
-        :param repositoryUrl: The url of the repository.
-        :type repositoryUrl: str
-        :param head: The head to point to.
-        :type head: str
+        :param event: The TagCredentialsProvided event.
+        :type event: pythonedaartifacteventgitttagging.tag_credentials_provided.TagCredentialsProvided
         :return: The GitRepo.
-        :rtype: GitRepo from pythonedasharedgit.git_repo
+        :rtype: pythonedasharedgit.git_repo.GitRepo
         """
-        raise NotImplementedError("create(url, head) should be implemented by subclasses")
+        return SshGitRepo(event.repository_url, event.branch, event.ssh_username, event.private_key_file, event.private_key_passphrase)
